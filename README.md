@@ -41,10 +41,12 @@ This repository is structured as follows:
 
 Maven helps manage the following dependencies to this project:
 
-- [Google GenAI Java SDK](https://github.com/googleapis/java-genai) (used version: 1.17.0)
-- [OpenPnP OpenCV](https://github.com/openpnp/opencv) (used version: 4.9.0)
-- [Apache Commons Text](https://commons.apache.org/proper/commons-text/) (used version: 1.14.0)
-- [Apache Commons IO](https://commons.apache.org/proper/commons-io/) (used version: 2.20.0)
+| Dependencies                                                           | Used version |
+|:-----------------------------------------------------------------------|:------------:| 
+| [Google GenAI Java SDK](https://github.com/googleapis/java-genai)      |    1.17.0    | 
+| [OpenPnP OpenCV](https://github.com/openpnp/opencv)                    |    4.9.0     | 
+| [Apache Commons Text](https://commons.apache.org/proper/commons-text/) |    1.14.0    |
+| [Apache Commons IO](https://commons.apache.org/proper/commons-io/)     |    2.20.0    |
 
 ### 🤖 Integration with Google Gemini
 
