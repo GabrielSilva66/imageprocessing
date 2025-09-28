@@ -56,14 +56,14 @@ defined in the API. In this project, the Google GenAI SDK library is integrated 
 
 Interacting with the Gemini API requires an [API key](https://ai.google.dev/gemini-api/docs/api-key). In the current 
 implementation, the API key is [explicitly provided](https://ai.google.dev/gemini-api/docs/api-key#provide-api-key-explicitly) 
-from a file.
+from a file. A personal, work, or school Google account is needed.
 
 The [`URLGenerator`](src/main/java/URLGenerator.java) class is responsible for generating the list of image URLs.
 This class uses two prompts submitted to Google Gemini via a client object that manages the interactions with the 
 models. The first one requests the generation of image URLs:
 
 ```
-Generate {numimages} public domain image URL (either JPEG or PNG format) from trusted public domain image repositories. 
+Generate {numimages} public domain image URLs (either JPEG or PNG format) from trusted public domain image repositories. 
 The URL must directly point to a valid image file ending with .jpg or .png and the file size must be less than 200 KB. 
 Provide the final image URLs in plain text.
 ```
@@ -76,12 +76,17 @@ Extract all URLs from the following contents into a plain text list. Each URL mu
 These are the contents: {output of the first prompt}
 ```
 
-### ☑️ URL Validity Check
+### ☑️ URL validity check
 
 To avoid generating a URL to an image that is not directly accessible (e.g., image not found, redirecting to 
 another page where the image is posted, etc.), an HTTP GET request is done for each generated URL. In case of the URL
 is inaccessible, another URL is generated. This is done until reaching the number of URLs defined for the program. 
 The downloaded images are saved into a project directory named as `images`.
+
+### ▶️ Running the program
+
+[`Main`](src/main/java/Main.java) is the main class for the program. The number of images to process is given through a 
+command-line argument when running the program.
 
 ---
 
