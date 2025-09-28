@@ -58,7 +58,8 @@ defined in the API. In this project, the Google GenAI SDK library is integrated 
 
 Interacting with the Gemini API requires an [API key](https://ai.google.dev/gemini-api/docs/api-key). In the current 
 implementation, the API key is [explicitly provided](https://ai.google.dev/gemini-api/docs/api-key#provide-api-key-explicitly) 
-from a file. A personal, work, or school Google account is needed.
+from a file. A personal, work, or school Google account is needed to create an API key via 
+[Google AI Studio](https://aistudio.google.com/app/api-keys).
 
 The [`URLGenerator`](src/main/java/URLGenerator.java) class is responsible for generating the list of image URLs.
 This class uses two prompts submitted to Google Gemini via a client object that manages the interactions with the 
