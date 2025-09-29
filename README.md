@@ -67,9 +67,9 @@ models. The first one requests the generation of image URLs:
 
 ```
 Generate {numimages} public domain image URLs (either JPEG or PNG format) from trusted 
-public domain image repositories. The URL must directly point to a valid image file 
-ending with .jpg or .png and the file size must be less than 200 KB. Provide the final 
-image URLs in plain text.
+public domain image repositories. Exclude Wikimedia Commons and related sites.
+The URL must directly point to a valid image file ending with .jpg or .png, and the 
+file size must be less than 200 KB. Provide the final image URLs in plain text.
 ```
 
 However, there is no guarantee that this prompt generates only the list of image URLs. To circumvent this issue, a
