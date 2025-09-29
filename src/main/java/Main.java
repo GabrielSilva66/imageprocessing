@@ -34,8 +34,7 @@ public class Main {
             String grayFile = OUTPUT_DIR + File.separator + (i + 1) + imageUrls.get(i).
                     substring(imageUrls.get(i).lastIndexOf('.'));
 
-            FileDownloader.downloadImage(imageUrls.get(i),
-                    OUTPUT_DIR + File.separator + imageFile);
+            FileDownloader.downloadImage(imageUrls.get(i), imageFile);
             ImageProcessor.toGrayscale(imageFile, grayFile);
         }
     }

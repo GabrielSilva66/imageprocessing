@@ -19,7 +19,6 @@ public class FileDownloader {
      */
     public static void downloadImage(String url, String filename) {
         try {
-            System.out.println("Downloading image from " + url + " to " + filename);
             FileUtils.copyURLToFile(new URI(url).toURL(), new File(filename));
         } catch (IOException | URISyntaxException e) {
             System.err.println("Error while downloading image from " + url);
