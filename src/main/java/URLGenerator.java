@@ -59,9 +59,9 @@ public class URLGenerator {
                 // Prompt to generate image URLs
                 String generationPrompt = "Generate " + numimages + " public domain image URLs " +
                         "(either JPEG or PNG format) from trusted public domain image repositories. " +
-                        "The URLs must directly point to a valid image file ending with .jpg or .png " +
-                        "and the file size must be less than 200 KB. Provide the final image URLs " +
-                        "in plain text.";
+                        "Exclude Wikimedia Commons and related sites. The URLs must directly point " +
+                        "to a valid image file ending with .jpg or .png, and the file size must be " +
+                        "less than 200 KB. Provide the final image URLs in plain text.";
                 GenerateContentResponse generationResponse = client.models
                         .generateContent(GENAI_MODEL, generationPrompt, null);
 
