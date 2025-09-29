@@ -24,6 +24,9 @@ public class URLGenerator {
     /** Client object to interact with Google Gemini API */
     private static final Client client;
 
+    /** API key file */
+    private static final String APIKEY_FILE = "googleai.key";
+
     /*
      Interacting with the Gemini API requires an API key. In this implementation,
      the API key is explicitly provided from a file.
@@ -31,9 +34,9 @@ public class URLGenerator {
     static {
         String apiKey = "";
         try {
-            apiKey = Files.readString(Paths.get("googleai.key")).trim();
+            apiKey = Files.readString(Paths.get(APIKEY_FILE)).trim();
         } catch (IOException e) {
-            System.err.println("Failed to read API key from googleai.key: " + e.getMessage());
+            System.err.println("Failed to read API key: " + e.getMessage());
             System.exit(1);
         }
 
