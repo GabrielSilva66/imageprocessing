@@ -7,9 +7,6 @@ import java.nio.file.*;
 import java.util.List;
 
 public class ImageValidator {
-
-    private static final int MAX_SIZE = 200_000; // 200 KB
-
     public static void main(String[] args) throws IOException {
         List<String> urls = Files.readAllLines(Paths.get("image_urls.txt"));
 

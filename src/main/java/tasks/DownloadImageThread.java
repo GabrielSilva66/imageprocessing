@@ -1,9 +1,5 @@
 package tasks;
 
-import utils.FileDownloader;
-
-import java.io.File;
-
 public class DownloadImageThread extends Thread {
     protected DownloadImage downloadImage;
     protected ProcessImageThread processImageThread;

@@ -1,10 +1,5 @@
 package tasks;
 
-
-import handleimages.ImageProcessor;
-
-import java.io.File;
-
 public class ProcessImageThread extends Thread {
     protected ProcessImage processImage;
     protected String downloadPath;

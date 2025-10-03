@@ -21,10 +21,6 @@ public class ProcessImage {
         time = endTime - startTime;
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
     public String getFilePath() {
         return PROCESS_DIR + File.separator + fileName;
     }

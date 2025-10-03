@@ -3,7 +3,6 @@ package tasks;
 import utils.FileDownloader;
 
 import java.io.File;
-import java.nio.file.Path;
 
 public class DownloadImage {
     protected String url;
