@@ -23,12 +23,9 @@ public class Main {
     public static void main(String[] args) throws IOException {
         OpenCV.loadLocally();       // Loading OpenCV native libraries locally in Java
 
-        int numimages = 10;
-
         List<String> imageUrls = Files.readAllLines(Paths.get("image_urls_valid.txt"));
 
         ImageProcessingBenchmark benchmark = new ImageProcessingBenchmark(imageUrls);
-        benchmark.processSequentially(numimages);
-
+        benchmark.run();
     }
 }

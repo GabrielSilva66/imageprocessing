@@ -1,93 +1,120 @@
 package handleimages;
 
-import utils.FileDownloader;
+import tasks.DownloadImage;
+import tasks.DownloadImageThread;
+import tasks.ProcessImage;
+import tasks.ProcessImageThread;
 import utils.FileNameUtils;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class ImageProcessingBenchmark {
+public record ImageProcessingBenchmark(List<String> imgUrls) {
+    private static final String FILE_NAME = "execution_times.csv";
 
-    /** Directory to store downloaded images */
-    private final static String IMAGES_DIR = "images";
+    public void run() {
+        int[] sizes = {10, 25, 50, 100, 250, 500, 1000, 2500};
 
-    /** Directory to store processed images */
-    private final static String OUTPUT_DIR = "gs-images";
+        // Dados do CSV
+        List<String> results = new ArrayList<>();
+        results.add("images,sequential,concurrent");
 
-    private final List<String> imgUrls;
+        for (int size : sizes) {
+            Long sequentiallyTime = runSequentially(size);
+            System.out.println("Sequentially execution with " + size
+                    + " images finished in " + sequentiallyTime + "ms");
 
-    public ImageProcessingBenchmark(List<String> imgUrls) {
-        this.imgUrls = imgUrls;
+            Long concurrentlyTime = runConcurrently(size);
+            System.out.println("Concurrently execution with " + size
+                    + " images finished in " + concurrentlyTime + "ms");
+
+            String line = String.format("%d,%d,%d", size, sequentiallyTime, concurrentlyTime);
+            results.add(line);
+        }
+
+        try {
+            writeResultsToFile(results);
+            System.out.println("\nResultados gravados em " + FILE_NAME);
+        } catch (IOException e) {
+            System.err.println("Erro ao gravar no arquivo: " + e.getMessage());
+        }
     }
 
-    public void processSequentially(int numImages) {
-        long totalFilterTime = 0;
+    private void writeResultsToFile(List<String> lines) throws IOException {
+        Path filePath = Path.of(FILE_NAME);
+
+        Files.write(
+                filePath,
+                lines,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING
+        );
+    }
+
+    public Long runSequentially(int numImages) {
+        Long totalFilterTime = 0L;
 
         for (int i = 0; i < numImages; i++) {
             String url = imgUrls.get(i);
-            totalFilterTime += processImage(url, i);
+            String fileName = FileNameUtils.getSafeFileName(url, i);
+
+            DownloadImage downloader = new DownloadImage(url, fileName);
+            downloader.run();
+
+            ProcessImage processImage = new ProcessImage(fileName);
+            processImage.run(downloader.getFilePath());
+
+            totalFilterTime += processImage.getTime();
         }
 
-        System.out.println("Tempo total SEQUENCIAL aplicando filtro em "
-                + numImages + " imagens: " + totalFilterTime + " ms");
+        return totalFilterTime;
     }
 
-
-    public void processInConcurrency(int numImages) {
-        List<Thread> workers = new ArrayList<>();
-        List<Long> times = Collections.synchronizedList(new ArrayList<>());
+    public Long runConcurrently(int numImages) {
+        List<DownloadImageThread> downloadThreads = new ArrayList<>();
+        List<ProcessImageThread> processThreads = new ArrayList<>();
 
         for (int i = 0; i < numImages; i++) {
-            final int index = i;
-            final String url = imgUrls.get(i);
+            String url = imgUrls.get(i);
+            String fileName = FileNameUtils.getSafeFileName(url, i);
 
-            Thread t = new Thread(() -> {
-                long filterTime = processImage(url, index);
-                times.add(filterTime);
-            });
-            workers.add(t);
-            t.start();
+            String baseThreadName = "Thread " + i;
+            String downloadThreadName = "Download " + baseThreadName;
+            String processThreadName = "Process " + baseThreadName;
+
+            ProcessImageThread processThread = new ProcessImageThread(processThreadName, fileName);
+            DownloadImageThread downloadThread = new DownloadImageThread(
+                    downloadThreadName,
+                    url,
+                    fileName,
+                    processThread
+            );
+
+            downloadThread.start();
+
+            downloadThreads.add(downloadThread);
+            processThreads.add(processThread);
         }
 
-        for (Thread t : workers) {
+        for (int i = 0; i < numImages; i++) {
             try {
-                t.join();
+                downloadThreads.get(i).join();
+                processThreads.get(i).join();
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                System.err.println("Interrupted error in Threads " + i);
             }
         }
 
-        long totalFilterTime = times.stream().mapToLong(Long::longValue).sum();
+        Long totalFilterTime = 0L;
 
-        System.out.println("Tempo total" + numImages + " imagens: " + totalFilterTime + " ms");
-    }
-
-    private static long processImage(String url, int index) {
-        try {
-            String imageFile = FileNameUtils.getSafeFileName(url, IMAGES_DIR, index);
-            String grayFile  = FileNameUtils.getSafeFileName(url, OUTPUT_DIR, index);
-
-            FileDownloader.downloadImage2(url, imageFile);
-
-            long startTime = System.currentTimeMillis();
-
-            ImageProcessor.toGrayscale(imageFile, grayFile);
-
-            long endTime = System.currentTimeMillis();
-            long filterTime = endTime - startTime;
-
-            System.out.println("Thread " + Thread.currentThread().getName() +
-                    " aplicou filtro em " + grayFile + " (" + filterTime + " ms)");
-
-            return filterTime;
-        } catch (Exception e) {
-            System.err.println("Erro na thread " + Thread.currentThread().getName() + ": " + e.getMessage());
-            return 0;
+        for (int i = 0; i < numImages; i++) {
+            totalFilterTime += processThreads.get(i).getTime();
         }
+
+        return totalFilterTime;
     }
-
-
-
-
 }
