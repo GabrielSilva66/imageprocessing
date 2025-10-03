@@ -1,3 +1,5 @@
+package utils;
+
 import com.google.genai.Client;
 import com.google.genai.errors.ApiException;
 import com.google.genai.types.GenerateContentResponse;
@@ -92,7 +94,7 @@ public class URLGenerator {
      * @param url URL to check
      * @return True, if the request is successful, false otherwise
      */
-    private static boolean isAccessible(String url) {
+    public static boolean isAccessible(String url) {
         try {
             URL urlObject = new URI(url).toURL();
             HttpURLConnection connection = (HttpURLConnection) urlObject.openConnection();

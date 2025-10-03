@@ -1,19 +1,18 @@
+import handleimages.ImageProcessingBenchmark;
 import nu.pattern.OpenCV;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
+
 
 /**
  * Main program
  *
- * @author <a href="mailto:everton.cavalcante@ufrn.br">Everton Cavalcante</a>
+ * @author <a href="mailto:"> </a>
  */
 public class Main {
-    /** Directory to store downloaded images */
-    private final static String IMAGES_DIR = "images";
-
-    /** Directory to store processed images */
-    private final static String OUTPUT_DIR = "gs-images";
 
     /**
      * Main method.
@@ -21,21 +20,15 @@ public class Main {
      *
      * @param args Command-line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         OpenCV.loadLocally();       // Loading OpenCV native libraries locally in Java
 
-        int numimages = Integer.parseInt(args[0]);
-        List<String> imageUrls = URLGenerator.generateImageURLs(numimages);
+        int numimages = 10;
 
-        // For each image URL, downloads the image and converts to grayscale
-        for (int i = 0; i < imageUrls.size(); i++) {
-            String imageFile = IMAGES_DIR + File.separator + (i + 1) + imageUrls.get(i).
-                    substring(imageUrls.get(i).lastIndexOf('.'));
-            String grayFile = OUTPUT_DIR + File.separator + (i + 1) + imageUrls.get(i).
-                    substring(imageUrls.get(i).lastIndexOf('.'));
+        List<String> imageUrls = Files.readAllLines(Paths.get("image_urls_valid.txt"));
 
-            FileDownloader.downloadImage(imageUrls.get(i), imageFile);
-            ImageProcessor.toGrayscale(imageFile, grayFile);
-        }
+        ImageProcessingBenchmark benchmark = new ImageProcessingBenchmark(imageUrls);
+        benchmark.processSequentially(numimages);
+
     }
 }

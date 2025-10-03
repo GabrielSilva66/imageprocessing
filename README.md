@@ -20,10 +20,10 @@ This repository is structured as follows:
 .
 ├── doc/                        # Javadoc documentation
 ├── src/main/java               # Source code
-│   ├── FileDownloader.java     # Downloads an image from its URL on the Web
-│   ├── ImageProcessor.java     # Applies transformation to an image
+│   ├── utils.FileDownloader.java     # Downloads an image from its URL on the Web
+│   ├── handleimages.ImageProcessor.java     # Applies transformation to an image
 │   ├── Main.java               # Main program
-│   ├── URLGenerator.java       # Generates image URLs
+│   ├── utils.URLGenerator.java       # Generates image URLs
 └── pom.xml                     # Maven configuration file
 └── README.md
 ```
@@ -61,7 +61,7 @@ implementation, the API key is [explicitly provided](https://ai.google.dev/gemin
 from a file. A personal, work, or school Google account is needed to create a project and an API key via
 [Google AI Studio](https://aistudio.google.com/app/api-keys).
 
-The [`URLGenerator`](src/main/java/URLGenerator.java) class is responsible for generating the list of image URLs.
+The [`utils.URLGenerator`](src/main/java/URLGenerator.java) class is responsible for generating the list of image URLs.
 This class uses two prompts submitted to Google Gemini via a client object that manages the interactions with the 
 models. The first one requests the generation of image URLs:
 
