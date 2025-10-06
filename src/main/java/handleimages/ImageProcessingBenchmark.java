@@ -6,6 +6,8 @@ import tasks.ProcessImage;
 import tasks.ProcessImageThread;
 import utils.FileNameUtils;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,29 +21,30 @@ public record ImageProcessingBenchmark(List<String> imgUrls) {
     public void run() {
         int[] sizes = {10, 25, 50, 100, 250, 500, 1000, 2500};
 
-        // Dados do CSV
-        List<String> results = new ArrayList<>();
-        results.add("images,sequential,concurrent,limited-concurrent");
+        // Nome do arquivo
+        final String FILE_NAME = "resultados.csv";
 
-        for (int size : sizes) {
-            Long sequentiallyTime = runSequentially(size);
-            System.out.println("Sequentially execution with " + size
-                    + " images finished in " + sequentiallyTime + "ms");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
+            // Cabeçalho
+            writer.write("images,sequential,concurrent,limited-concurrent");
+            writer.newLine();
 
-            Long concurrentlyTime = runConcurrently(size);
-            System.out.println("Concurrently execution with " + size
-                    + " images finished in " + concurrentlyTime + "ms");
+            for (int size : sizes) {
+                Long sequentiallyTime = runSequentially(size);
+                System.out.println("Sequentially execution with " + size + " images finished in " + sequentiallyTime + "ms");
 
-            Long limitedConcurrentlyTime = runLimitedConcurrently(size);
-            System.out.println("Limited concurrently execution with " + size
-                    + " images finished in " + limitedConcurrentlyTime + "ms");
+                Long concurrentlyTime = runConcurrently(size);
+                System.out.println("Concurrently execution with " + size + " images finished in " + concurrentlyTime + "ms");
 
-            String line = String.format("%d,%d,%d,%d", size, sequentiallyTime, concurrentlyTime, limitedConcurrentlyTime);
-            results.add(line);
-        }
+                Long limitedConcurrentlyTime = runLimitedConcurrently(size);
+                System.out.println("Limited concurrently execution with " + size + " images finished in " + limitedConcurrentlyTime + "ms");
 
-        try {
-            writeResultsToFile(results);
+                String line = String.format("%d,%d,%d,%d", size, sequentiallyTime, concurrentlyTime, limitedConcurrentlyTime);
+                writer.write(line);
+                writer.newLine();
+                writer.flush(); // garante que o conteúdo vá imediatamente para o arquivo
+            }
+
             System.out.println("\nResultados gravados em " + FILE_NAME);
         } catch (IOException e) {
             System.err.println("Erro ao gravar no arquivo: " + e.getMessage());
@@ -71,6 +74,7 @@ public record ImageProcessingBenchmark(List<String> imgUrls) {
 
             ProcessImage processImage = new ProcessImage(fileName);
             processImage.run(downloader.getFilePath());
+
 
             totalFilterTime += processImage.getTime();
         }

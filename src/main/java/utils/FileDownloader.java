@@ -37,8 +37,8 @@ public class FileDownloader {
             URL url = new URL(urlStr);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("User-Agent", "Mozilla/5.0");
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(10000);
+            connection.setConnectTimeout(10000); // 10 segundos para conectar
+            connection.setReadTimeout(20000);
 
             try (InputStream in = connection.getInputStream();
                  FileOutputStream out = new FileOutputStream(outputPath)) {
