@@ -21,7 +21,7 @@ public record ImageProcessingBenchmark(List<String> imgUrls) {
 
         // Dados do CSV
         List<String> results = new ArrayList<>();
-        results.add("images,sequential,concurrent");
+        results.add("images,sequential,concurrent,limited-concurrent");
 
         for (int size : sizes) {
             Long sequentiallyTime = runSequentially(size);
@@ -32,7 +32,11 @@ public record ImageProcessingBenchmark(List<String> imgUrls) {
             System.out.println("Concurrently execution with " + size
                     + " images finished in " + concurrentlyTime + "ms");
 
-            String line = String.format("%d,%d,%d", size, sequentiallyTime, concurrentlyTime);
+            Long limitedConcurrentlyTime = runLimitedConcurrently(size);
+            System.out.println("Limited concurrently execution with " + size
+                    + " images finished in " + limitedConcurrentlyTime + "ms");
+
+            String line = String.format("%d,%d,%d,%d", size, sequentiallyTime, concurrentlyTime, limitedConcurrentlyTime);
             results.add(line);
         }
 
@@ -111,6 +115,52 @@ public record ImageProcessingBenchmark(List<String> imgUrls) {
 
         Long totalFilterTime = 0L;
 
+        for (int i = 0; i < numImages; i++) {
+            totalFilterTime += processThreads.get(i).getTime();
+        }
+
+        return totalFilterTime;
+    }
+
+    public Long runLimitedConcurrently(int numImages) {
+        final int threadsLimit = 8;
+        List<DownloadImageThread> downloadThreads = new ArrayList<>();
+        List<ProcessImageThread> processThreads = new ArrayList<>();
+
+        for (int i = 0; i < numImages; i += threadsLimit) {
+            for (int j = i; j < numImages && j - i < threadsLimit; j++) {
+                String url = imgUrls.get(j);
+                String fileName = FileNameUtils.getSafeFileName(url, j);
+
+                String baseThreadName = "Thread " + j;
+                String downloadThreadName = "Download " + baseThreadName;
+                String processThreadName = "Process " + baseThreadName;
+
+                ProcessImageThread processThread = new ProcessImageThread(processThreadName, fileName);
+                DownloadImageThread downloadThread = new DownloadImageThread(
+                        downloadThreadName,
+                        url,
+                        fileName,
+                        processThread
+                );
+
+                downloadThread.start();
+
+                downloadThreads.add(downloadThread);
+                processThreads.add(processThread);
+            }
+
+            for (int j = i; j < numImages && j - i < threadsLimit; j++) {
+                try {
+                    downloadThreads.get(j).join();
+                    processThreads.get(j).join();
+                } catch (InterruptedException e) {
+                    System.err.println("Interrupted error in Threads " + j);
+                }
+            }
+        }
+
+        Long totalFilterTime = 0L;
         for (int i = 0; i < numImages; i++) {
             totalFilterTime += processThreads.get(i).getTime();
         }
