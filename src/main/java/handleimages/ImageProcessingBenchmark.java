@@ -80,7 +80,7 @@ public record ImageProcessingBenchmark(List<String> imgUrls) {
         // Download images
         for (int i = 0; i < numImages; i++) {
             String url = imgUrls.get(i);
-            String fileName = FileNameUtils.getSafeFileName(url, i);
+            String fileName = FileNameUtils.getSafeFileName(i);
             DownloadImage downloader = new DownloadImage(url, fileName);
             downloader.run();
             files.add(new Pair<>(fileName, downloader.getFilePath()));
@@ -109,7 +109,7 @@ public record ImageProcessingBenchmark(List<String> imgUrls) {
 
         for (int i = 0; i < numImages; i++) {
             String url = imgUrls.get(i);
-            String fileName = FileNameUtils.getSafeFileName(url, i);
+            String fileName = FileNameUtils.getSafeFileName(i);
             DownloadImageThread downloadThread = new DownloadImageThread("Download Thread " + i, url, fileName);
             downloadThread.start();
             downloadThreads.add(downloadThread);
@@ -224,7 +224,7 @@ public record ImageProcessingBenchmark(List<String> imgUrls) {
         int upperBound = Math.min(i + threadsLimit, numImages);
         for (int j = i; j < upperBound; j++) {
             String url = imgUrls.get(j);
-            String fileName = FileNameUtils.getSafeFileName(url, j);
+            String fileName = FileNameUtils.getSafeFileName(j);
             DownloadImageThread downloadThread = new DownloadImageThread("Download Thread " + j, url, fileName);
             downloadThread.start();
             downloadThreads.add(downloadThread);
