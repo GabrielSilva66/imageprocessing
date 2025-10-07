@@ -1,20 +1,22 @@
 package utils;
 
+/**
+ * Utility class for generating safe and consistent image file names.
+ */
 public class FileNameUtils {
 
     /**
-     * Gera um nome de arquivo seguro a partir de uma URL.
-     * @param url URL da imagem
-     * @param index Índice da imagem (para evitar nomes duplicados)
-     * @return Caminho completo do arquivo com extensão correta
+     * Generates a safe file name based on the given image URL.
+     * <p>
+     * The method appends an index to avoid duplicate file names
+     * and uses the <code>.jpg</code> extension by default.
+     * </p>
+     *
+     * @param url   the image URL
+     * @param index the image index (used to avoid duplicate names)
+     * @return the generated file name with the proper extension
      */
     public static String getSafeFileName(String url, int index) {
-        int queryIndex = url.indexOf('?');
-        String cleanUrl = queryIndex != -1 ? url.substring(0, queryIndex) : url;
-
-        int lastDot = cleanUrl.lastIndexOf('.');
-        String extension = lastDot != -1 ? cleanUrl.substring(lastDot) : ".jpg"; // padrão jpg se não houver
-
-        return "image" + index + extension;
+        return "image" + index + ".jpg";
     }
 }
