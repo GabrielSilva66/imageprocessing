@@ -13,17 +13,22 @@ import java.util.List;
  * @author <a href="mailto:"> </a>
  */
 public class Main {
+    static {
+        OpenCV.loadLocally();
+    }
 
     /**
      * Main method.
-     * The number of images to process is provided via the command line.
      *
      * @param args Command-line arguments
      */
     public static void main(String[] args) throws IOException {
-        OpenCV.loadLocally();       // Loading OpenCV native libraries locally in Java
-
-        List<String> imageUrls = Files.readAllLines(Paths.get("image_urls_valid.txt"));
+        var path = Paths.get("image_urls_valid.txt");
+        if (!Files.exists(path)) {
+            System.err.println("Arquivo não encontrado: " + path.toAbsolutePath());
+            return;
+        }
+        List<String> imageUrls = Files.readAllLines(path);
 
         ImageProcessingBenchmark benchmark = new ImageProcessingBenchmark(imageUrls);
         benchmark.run();

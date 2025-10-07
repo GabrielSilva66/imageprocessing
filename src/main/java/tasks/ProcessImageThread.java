@@ -12,12 +12,6 @@ public class ProcessImageThread extends Thread {
     @Override
     public void run() {
         processImage.run(downloadPath);
-        System.out.println("Thread " + Thread.currentThread().getName()
-                + " process image in " + processImage.getFilePath() + "(" + getTime() + " ms)");
-    }
-
-    public Long getTime() {
-        return processImage.getTime();
     }
 
     public void setDownloadPath(String downloadPath) {

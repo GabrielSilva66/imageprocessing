@@ -32,9 +32,10 @@ public class DownloadImage {
     }
 
     public void run() {
-        FileDownloader.downloadImage2(url, getFilePath());
+        FileDownloader.downloadImage(url, getFilePath());
     }
 
+    public String getFileName() { return fileName; }
     public String getFilePath() {
         return DOWNLOAD_DIR + File.separator + fileName;
     }

@@ -1,8 +1,5 @@
 package utils;
 
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,28 +17,19 @@ public class FileDownloader {
     /**
      * Downloads an image from its URL
      *
-     * @param url URL to the image
+     * @param urlStr URL to the image
      * @param filename Name of the file for the downloaded image
      */
-    public static void downloadImage(String url, String filename) {
+    public static void downloadImage(String urlStr, String filename) {
         try {
-            FileUtils.copyURLToFile(new URI(url).toURL(), new File(filename));
-        } catch (IOException | URISyntaxException e) {
-            System.err.println("Error while downloading image from " + url);
-            System.exit(1);
-        }
-    }
-
-    public static void downloadImage2(String urlStr, String outputPath) {
-        try {
-            URL url = new URL(urlStr);
+            URL url = new URI(urlStr).toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("User-Agent", "Mozilla/5.0");
-            connection.setConnectTimeout(10000); // 10 segundos para conectar
+            connection.setConnectTimeout(10000);
             connection.setReadTimeout(20000);
 
             try (InputStream in = connection.getInputStream();
-                 FileOutputStream out = new FileOutputStream(outputPath)) {
+                 FileOutputStream out = new FileOutputStream(filename)) {
                 byte[] buffer = new byte[4096];
                 int bytesRead;
                 while ((bytesRead = in.read(buffer)) != -1) {
@@ -49,11 +37,10 @@ public class FileDownloader {
                 }
             }
 
-            System.out.println("Download concluído: " + outputPath);
+            System.out.println("Download concluído: " + filename);
 
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             System.err.println("Error while downloading image from " + urlStr);
-            e.printStackTrace();
         }
     }
 }

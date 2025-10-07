@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 public class ProcessImage {
     protected String fileName;
     protected static final String PROCESS_DIR = "gs-images";
-    protected Long time;
 
     static {
         try {
@@ -30,19 +29,11 @@ public class ProcessImage {
     }
 
     public void run(String imagePath) {
-        Long startTime = System.currentTimeMillis();
         ImageProcessor.toGrayscale(imagePath, getFilePath());
-        Long endTime = System.currentTimeMillis();
-
-        time = endTime - startTime;
     }
 
     public String getFilePath() {
         return PROCESS_DIR + File.separator + fileName;
-    }
-
-    public Long getTime() {
-        return time;
     }
 }
 
